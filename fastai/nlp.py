@@ -357,7 +357,12 @@ class TextData(ModelData):
 
     def get_model(self, opt_fn, max_sl, bptt, emb_sz, n_hid, n_layers, dropout, **kwargs):
         m = get_rnn_classifer(max_sl, bptt, self.bs, self.c, self.nt,
-              layers=[emb_sz*3, self.c], drops=[dropout],
+                layers=[emb_sz*3, self.c], drops=[dropout],
               emb_sz=emb_sz, n_hid=n_hid, n_layers=n_layers, pad_token=self.pad_idx, **kwargs)
         return self.to_model(m, opt_fn)
 
+
+    def get_model2(self, opt_fn, emb_sz, n_hid, n_layers, **kwargs):
+        m = get_rnn_classifer(self.nt, emb_sz, n_hid, n_layers, self.pad_idx, **kwargs)
+        model = SingleModel(to_gpu(m))
+        return RNN_Learner(self, model, opt_fn=opt_fn)
